@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 
 const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
@@ -8,7 +8,8 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
   const [attempts, setAttempts] = useState(4);
   const [timer, setTimer] = useState(60);
   const [hintUsed, setHintUsed] = useState(false);
-
+  const [showFeedbackCard, setShowFeedbackCard] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
   const lastDigit = userInfo?.phone[userInfo.phone.length - 1];
 
   const startGame = () => {
@@ -33,11 +34,16 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
     }
     if (attempts > 0 && timer > 0) {
       if (numGuess === chosenNumber) {
-        setFeedback('You guessed correctly!');
+        setFeedback('You guessed correct!');
+        setGameOver(true);
+      } else if (numGuess < chosenNumber) {
+        setFeedback('You did not guess correct! You should guess higher!');
+        setShowFeedbackCard(true);
       } else {
-        setAttempts(attempts - 1);
-        setFeedback('Try again.');
+        setFeedback('You did not guess correct! You should guess lower!');
+        setShowFeedbackCard(true);
       }
+      setAttempts(attempts - 1);
     } else {
       setFeedback('No more attempts or time left!');
     }
@@ -52,10 +58,29 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
     }
   };
 
+  const tryAgain = () => {
+    setShowFeedbackCard(false);
+    setGuess('');
+  };
+
+  const endGame = () => {
+    setGameOver(true);
+  };
+
+  if (gameOver) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.text}>Game Over! The number was {chosenNumber}</Text>
+        <TouchableOpacity onPress={onRestart} style={styles.buttonActive}>
+          <Text style={styles.buttonText}>RESTART</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.restartContainer}>
-        {/* Restart button at the top-right corner */}
         <TouchableOpacity onPress={onRestart} style={styles.restartButton}>
           <Text style={styles.restartButtonText}>RESTART</Text>
         </TouchableOpacity>
@@ -68,32 +93,45 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
             <Text style={styles.buttonText}>START</Text>
           </TouchableOpacity>
         </View>
+      ) : showFeedbackCard ? (
+        <View style={styles.card}>
+          <Text style={styles.text}>{feedback}</Text>
+          <TouchableOpacity onPress={tryAgain} style={styles.buttonActive}>
+            <Text style={styles.buttonText}>Try Again</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={endGame} style={styles.buttonActive}>
+            <Text style={styles.buttonText}>End Game</Text>
+          </TouchableOpacity>
+        </View>
       ) : (
-        <View>
-          <View style={styles.card}>
-            <Text style={styles.text}>Guess a number between 1 & 100 that is a multiple of {lastDigit}</Text>
+        <View style={styles.card}>
+          <Text style={styles.text}>Guess a number between 1 & 100 that is a multiple of {lastDigit}</Text>
+          
+          {/* Updated TextInput */}
+          <TextInput
+            style={styles.inputUnderline}
+            placeholder="Enter your guess"
+            value={guess}
+            onChangeText={setGuess}
+            keyboardType="numeric"
+          />
+          
+          <Text style={styles.text}>Attempts left: {attempts}</Text>
+          <Text style={styles.text}>Timer: {timer}s</Text>
 
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your guess"
-              value={guess}
-              onChangeText={setGuess}
-              keyboardType="numeric"
-            />
+          {/* Use hint button, visible even if disabled */}
+          <TouchableOpacity
+            onPress={useHint}
+            style={hintUsed ? styles.buttonDisabled : styles.buttonActive}
+            disabled={hintUsed}>
+            <Text style={styles.buttonText}>USE A HINT</Text>
+          </TouchableOpacity>
 
-            <Text style={styles.text}>Attempts left: {attempts}</Text>
-            <Text style={styles.text}>Timer: {timer}s</Text>
+          <TouchableOpacity onPress={handleGuess} style={styles.buttonActive}>
+            <Text style={styles.buttonText}>SUBMIT GUESS</Text>
+          </TouchableOpacity>
 
-            <TouchableOpacity onPress={useHint} style={hintUsed ? styles.buttonInactive : styles.buttonActive}>
-              <Text style={styles.buttonText}>USE A HINT</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={handleGuess} style={styles.buttonActive}>
-              <Text style={styles.buttonText}>SUBMIT GUESS</Text>
-            </TouchableOpacity>
-
-            {feedback ? <Text style={styles.feedback}>{feedback}</Text> : null}
-          </View>
+          {feedback ? <Text style={styles.feedback}>{feedback}</Text> : null}
         </View>
       )}
     </View>
@@ -128,13 +166,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#4a148c',
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 20,
+  inputUnderline: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#4a148c',
     width: '80%',
+    marginBottom: 20,
+    fontSize: 20,
     textAlign: 'center',
+    paddingBottom: 5,
   },
   buttonActive: {
     backgroundColor: '#0000ff',
@@ -144,8 +183,8 @@ const styles = StyleSheet.create({
     width: '80%',
     alignItems: 'center',
   },
-  buttonInactive: {
-    backgroundColor: 'transparent',
+  buttonDisabled: {
+    backgroundColor: '#d3d3d3', // Gray color to indicate disabled state
     padding: 10,
     marginVertical: 10,
     borderRadius: 5,
@@ -164,7 +203,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1e90ff',
     padding: 10,
     borderRadius: 5,
-    marginBottom: 10, // Add margin so it's outside of the card
+    marginBottom: 10,
   },
   restartButtonText: {
     color: '#fff',
