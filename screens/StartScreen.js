@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 
 const StartScreen = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [checkboxSelected, setCheckboxSelected] = useState(false);
+  const [errors, setErrors] = useState({ name: '', email: '', phone: '' });
 
   const validateName = (name) => {
     if (!name || name.length <= 1 || !isNaN(name)) {
@@ -31,7 +33,24 @@ const StartScreen = () => {
       setErrors((prevErrors) => ({ ...prevErrors, phone: '' }));
     }
   };
-  
+
+  const handleRegister = () => {
+    if (!name || !email || !phone || errors.name || errors.email || errors.phone) {
+      Alert.alert('Invalid input', 'Please correct the errors before registering');
+    } else {
+      Alert.alert('Success', 'Registration successful');
+      // Navigate to Confirm screen (to be implemented)
+    }
+  };
+
+  const handleReset = () => {
+    setName('');
+    setEmail('');
+    setPhone('');
+    setCheckboxSelected(false);
+    setErrors({ name: '', email: '', phone: '' });
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Register</Text>
@@ -67,7 +86,15 @@ const StartScreen = () => {
         }}
         style={styles.input}
       />
-      
+      {errors.phone ? <Text style={styles.errorText}>{errors.phone}</Text> : null}
+
+      <View style={styles.checkboxContainer}>
+        <Text>Accept terms</Text>
+        <Button title={checkboxSelected ? "Uncheck" : "Check"} onPress={() => setCheckboxSelected(!checkboxSelected)} />
+      </View>
+
+      <Button title="Reset" onPress={handleReset} />
+      <Button title="Register" onPress={handleRegister} disabled={!checkboxSelected} />
     </View>
   );
 };
@@ -85,6 +112,14 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     padding: 10,
     marginVertical: 5,
+  },
+  errorText: {
+    color: 'red',
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
   },
 });
 

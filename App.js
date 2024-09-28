@@ -1,20 +1,31 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView, Alert, StyleSheet } from 'react-native';
+import StartScreen from './screens/StartScreen';
 
 export default function App() {
+  // This state controls whether the user has successfully registered
+  const [isRegistered, setIsRegistered] = useState(false);
+
+  // Function to handle registration success from StartScreen
+  const handleRegister = () => {
+    setIsRegistered(true);
+    Alert.alert("Success", "You have successfully registered!");
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      {!isRegistered ? (
+        <StartScreen onRegister={handleRegister} />
+      ) : (
+        Alert.alert('You are already registered!')
+      )}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
   },
 });
