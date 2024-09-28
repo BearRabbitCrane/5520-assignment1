@@ -6,7 +6,7 @@ const ConfirmScreen = ({ visible, userInfo, onEdit, onConfirm }) => {
   return (
     <Modal visible={visible} transparent animationType="slide">
       <LinearGradient
-        colors={['rgba(0,0,0,0.8)', 'rgba(0,0,0,0)']}
+        colors={['rgba(0,0,0,0.9)', 'rgba(0,0,0,0.7)', 'rgba(0,0,0,0.5)']}
         style={styles.gradientBackground}
       >
         <View style={styles.card}>
