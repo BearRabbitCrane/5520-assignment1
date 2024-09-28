@@ -68,12 +68,10 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
           <Button title="Start" onPress={startGame} />
         </View>
       ) : (
-        // After the game starts, show the guessing interface
-        <View style={styles.gameContainer}>
-          <Text style={styles.title}>Guess the Number</Text>
-          <Text style={styles.description}>Attempts left: {attempts}</Text>
-          <Text style={styles.description}>Time left: {timer} seconds</Text>
-          
+        // After the game starts, show the guessing interface inside the card
+        <View style={styles.card}>
+          <Text style={styles.title}>Guess a number between 1 & 100 that is a multiple of {lastDigit}</Text>
+
           {/* Show the TextInput for user guesses */}
           <TextInput
             style={styles.input}
@@ -83,12 +81,16 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
             keyboardType="numeric"
           />
           
+          {/* Show attempts left and timer */}
+          <Text style={styles.description}>Attempts left: {attempts}</Text>
+          <Text style={styles.description}>Timer: {timer}s</Text>
+          
           {/* Submit guess button */}
-          <Button title="Submit Guess" onPress={handleGuess} />
-
+          <Button title="Submit guess" onPress={handleGuess} />
+          
           {/* Use hint button */}
           <Button title="Use a Hint" onPress={useHint} disabled={hintUsed} />
-
+          
           {feedback ? <Text style={styles.feedback}>{feedback}</Text> : null}
 
           {/* Restart button */}
@@ -104,7 +106,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#a0d8f3', // Added background color
+    backgroundColor: '#a0d8f3', // Background color for the entire screen
     padding: 20,
   },
   card: {
@@ -117,26 +119,20 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5, // Android shadow
-    alignItems: 'center',
-  },
-  gameContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center', // Center elements horizontally
   },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
-    color: '#4a148c', // Color adjustment
+    color: '#4a148c', // Title color
   },
   description: {
-    fontSize: 20,
+    fontSize: 16,
     textAlign: 'center',
     marginBottom: 20,
-    fontWeight: 'bold',
-    color: '#4a148c', // Color adjustment
+    color: '#4a148c', // Text color
   },
   input: {
     borderWidth: 1,
