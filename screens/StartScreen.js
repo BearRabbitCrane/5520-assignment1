@@ -55,63 +55,66 @@ const StartScreen = ({ onRegister }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Welcome</Text>
 
-      <Text style={styles.label}>Name</Text>
-      <TextInput
-        placeholder="Enter your name"
-        value={name}
-        onChangeText={(text) => {
-          setName(text);
-          validateName(text);
-        }}
-        style={styles.input}
-      />
-      {errors.name ? <Text style={styles.errorText}>{errors.name}</Text> : null}
-
-      <Text style={styles.label}>Email address</Text>
-      <TextInput
-        placeholder="Enter your email"
-        value={email}
-        onChangeText={(text) => {
-          setEmail(text);
-          validateEmail(text);
-        }}
-        style={styles.input}
-      />
-      {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
-
-      <Text style={styles.label}>Phone Number</Text>
-      <TextInput
-        placeholder="Enter your phone number"
-        keyboardType="numeric"
-        value={phone}
-        onChangeText={(text) => {
-          setPhone(text);
-          validatePhone(text);
-        }}
-        style={styles.input}
-      />
-      {errors.phone ? <Text style={styles.errorText}>{errors.phone}</Text> : null}
-
-      <View style={styles.checkboxContainer}>
-        <Checkbox
-          value={checkboxSelected}
-          onValueChange={setCheckboxSelected}
-          color={checkboxSelected ? '#4630EB' : undefined}
+      {/* Card with rounded corner and shadow */}
+      <View style={styles.card}>
+        <Text style={styles.label}>Name</Text>
+        <TextInput
+          placeholder="Enter your name"
+          value={name}
+          onChangeText={(text) => {
+            setName(text);
+            validateName(text);
+          }}
+          style={styles.input}
         />
-        <Text style={styles.checkboxLabel}>I am not a robot</Text>
-      </View>
+        {errors.name ? <Text style={styles.errorText}>{errors.name}</Text> : null}
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleReset} style={styles.resetButton}>
-          <Text style={styles.buttonText}>Reset</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={handleRegister}
-          style={[styles.registerButton, { opacity: checkboxSelected ? 1 : 0.5 }]}
-          disabled={!checkboxSelected}
-        >
-          <Text style={styles.buttonText}>Register</Text>
-        </TouchableOpacity>
+        <Text style={styles.label}>Email address</Text>
+        <TextInput
+          placeholder="Enter your email"
+          value={email}
+          onChangeText={(text) => {
+            setEmail(text);
+            validateEmail(text);
+          }}
+          style={styles.input}
+        />
+        {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
+
+        <Text style={styles.label}>Phone Number</Text>
+        <TextInput
+          placeholder="Enter your phone number"
+          keyboardType="numeric"
+          value={phone}
+          onChangeText={(text) => {
+            setPhone(text);
+            validatePhone(text);
+          }}
+          style={styles.input}
+        />
+        {errors.phone ? <Text style={styles.errorText}>{errors.phone}</Text> : null}
+
+        <View style={styles.checkboxContainer}>
+          <Checkbox
+            value={checkboxSelected}
+            onValueChange={setCheckboxSelected}
+            color={checkboxSelected ? '#4630EB' : undefined}
+          />
+          <Text style={styles.checkboxLabel}>I am not a robot</Text>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={handleReset} style={styles.resetButton}>
+            <Text style={styles.buttonText}>Reset</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleRegister}
+            style={[styles.registerButton, { opacity: checkboxSelected ? 1 : 0.5 }]}
+            disabled={!checkboxSelected}
+          >
+            <Text style={styles.buttonText}>Register</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -121,6 +124,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
     backgroundColor: '#e0f7fa',
   },
@@ -130,6 +134,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
     color: '#4a148c',
+  },
+  card: {
+    width: '90%',
+    padding: 20,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5, // Android shadow
   },
   label: {
     fontSize: 16,
