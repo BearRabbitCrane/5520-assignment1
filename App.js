@@ -13,18 +13,17 @@ export default function App() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const handleRegister = (name, email, phone) => {
-    setUserInfo({ name, email, phone });
-    setShowConfirmModal(true);
+    setUserInfo({ name, email, phone }); // Save the user input into state
+    setShowConfirmModal(true); // Show the confirm modal
   };
 
   const handleEdit = () => {
-    setShowConfirmModal(false);
+    setShowConfirmModal(false); // Close the modal and return to StartScreen
   };
 
   const handleConfirm = () => {
     setShowConfirmModal(false);
-    setIsRegistered(true);
-    // Continue to the next screen (e.g., the game screen)
+    setIsRegistered(true); // Confirm the information and proceed to the game screen
   };
 
   return (
@@ -32,12 +31,11 @@ export default function App() {
       {!isRegistered ? (
         <StartScreen onRegister={handleRegister} />
       ) : (
-        // Here you could show the Game screen or another screen
-        <Text>Game Screen Placeholder</Text>
+        <Text>Game Screen Placeholder</Text>  // Placeholder for the Game screen
       )}
       <ConfirmScreen
         visible={showConfirmModal}
-        userInfo={userInfo}
+        userInfo={userInfo}  // Pass user data to ConfirmScreen
         onEdit={handleEdit}
         onConfirm={handleConfirm}
       />

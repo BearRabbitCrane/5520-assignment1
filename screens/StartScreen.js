@@ -39,7 +39,7 @@ const StartScreen = ({ onRegister }) => {
     if (!name || !email || !phone || errors.name || errors.email || errors.phone) {
       Alert.alert('Invalid input', 'Please correct the errors before registering');
     } else {
-      onRegister(); // Call the prop function to switch the screen
+      onRegister(name, email, phone); // Pass the user info to the parent component (App.js)
     }
   };
 
@@ -55,7 +55,7 @@ const StartScreen = ({ onRegister }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Welcome</Text>
 
-      {/* Card with rounded corner and shadow */}
+      {/* Card with rounded corners and shadow */}
       <View style={styles.card}>
         <Text style={styles.label}>Name</Text>
         <TextInput
@@ -149,6 +149,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     color: '#4a148c',
+    marginBottom: 5,
   },
   input: {
     borderBottomWidth: 1,
@@ -160,6 +161,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     fontSize: 14,
+    marginBottom: 10,
   },
   checkboxContainer: {
     flexDirection: 'row',

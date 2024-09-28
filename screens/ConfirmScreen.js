@@ -11,6 +11,7 @@ const ConfirmScreen = ({ visible, userInfo, onEdit, onConfirm }) => {
       >
         <View style={styles.card}>
           <Text style={styles.title}>Confirm Information</Text>
+          {/* Display the user input data */}
           <Text style={styles.info}>Name: {userInfo.name}</Text>
           <Text style={styles.info}>Email: {userInfo.email}</Text>
           <Text style={styles.info}>Phone: {userInfo.phone}</Text>
