@@ -1,25 +1,40 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 
 const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
   const [gameStarted, setGameStarted] = useState(false);  // Control whether the game has started
   const [guess, setGuess] = useState('');
   const [feedback, setFeedback] = useState('');
-  const [attempts, setAttempts] = useState(4);
-  const [timer, setTimer] = useState(60);
+  const [attempts, setAttempts] = useState(4);  // User has 4 attempts
+  const [timer, setTimer] = useState(60);  // 60-second timer
+  const [hintUsed, setHintUsed] = useState(false);  // Control if user has used the hint
 
   // Ensure userInfo is defined before accessing its properties
   const lastDigit = userInfo?.phone[userInfo.phone.length - 1];  // Safely get the last digit of the phone number
 
-  // Function to handle game start
+  // Start the game and initiate the timer
   const startGame = () => {
     setGameStarted(true);
-    // Here you could start a timer for the 60 seconds
+    const interval = setInterval(() => {
+      setTimer((prevTimer) => {
+        if (prevTimer === 0) {
+          clearInterval(interval);
+          Alert.alert('Time’s up!', 'You have run out of time.');
+          return prevTimer;
+        }
+        return prevTimer - 1;
+      });
+    }, 1000);  // Update every second
   };
 
+  // Validate the guess and provide feedback
   const handleGuess = () => {
+    const numGuess = parseInt(guess, 10);
+    if (isNaN(numGuess) || numGuess < 1 || numGuess > 100) {
+      Alert.alert('Invalid Input', 'Please enter a number between 1 and 100.');
+      return;
+    }
     if (attempts > 0 && timer > 0) {
-      const numGuess = parseInt(guess, 10);
       if (numGuess === chosenNumber) {
         setFeedback('You guessed correctly!');
       } else {
@@ -31,10 +46,20 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
     }
   };
 
+  // Provide a hint about the chosen number
+  const useHint = () => {
+    if (!hintUsed) {
+      setHintUsed(true);
+      Alert.alert('Hint', `The chosen number is a multiple of ${lastDigit}`);
+    } else {
+      Alert.alert('No more hints', 'You have already used your hint.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       {!gameStarted ? (
-        // Show the instructions card before the game starts
+        // Show the instructions card with Start button
         <View style={styles.card}>
           <Text style={styles.title}>Guess a number between 1 & 100</Text>
           <Text style={styles.description}>
@@ -43,11 +68,13 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
           <Button title="Start" onPress={startGame} />
         </View>
       ) : (
-        // The game has started, show the guessing interface
+        // After the game starts, show the guessing interface
         <View style={styles.gameContainer}>
           <Text style={styles.title}>Guess the Number</Text>
-          <Text style={styles.description}>Attempts left: {attempts}, Time left: {timer} seconds</Text>
+          <Text style={styles.description}>Attempts left: {attempts}</Text>
+          <Text style={styles.description}>Time left: {timer} seconds</Text>
           
+          {/* Show the TextInput for user guesses */}
           <TextInput
             style={styles.input}
             placeholder="Enter your guess"
@@ -55,10 +82,16 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
             onChangeText={setGuess}
             keyboardType="numeric"
           />
-          <Button title="Submit Guess" onPress={handleGuess} />
           
+          {/* Submit guess button */}
+          <Button title="Submit Guess" onPress={handleGuess} />
+
+          {/* Use hint button */}
+          <Button title="Use a Hint" onPress={useHint} disabled={hintUsed} />
+
           {feedback ? <Text style={styles.feedback}>{feedback}</Text> : null}
 
+          {/* Restart button */}
           <Button title="Restart" onPress={onRestart} color="red" />
         </View>
       )}
