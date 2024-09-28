@@ -53,7 +53,8 @@ export default function App() {
       {!isRegistered ? (
         <StartScreen onRegister={handleRegister} />
       ) : (
-        <GameScreen chosenNumber={chosenNumber} onRestart={handleRestart} />
+        // Pass userInfo to GameScreen to avoid 'undefined' error
+        <GameScreen chosenNumber={chosenNumber} onRestart={handleRestart} userInfo={userInfo} />
       )}
       <ConfirmScreen
         visible={showConfirmModal}
