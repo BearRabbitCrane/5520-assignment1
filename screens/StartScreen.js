@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import Checkbox from 'expo-checkbox';
 
-const StartScreen = () => {
+const StartScreen = ({ onRegister }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -10,7 +11,7 @@ const StartScreen = () => {
 
   const validateName = (name) => {
     if (!name || name.length <= 1 || !isNaN(name)) {
-      setErrors((prevErrors) => ({ ...prevErrors, name: 'Invalid name' }));
+      setErrors((prevErrors) => ({ ...prevErrors, name: 'Please enter a valid name' }));
     } else {
       setErrors((prevErrors) => ({ ...prevErrors, name: '' }));
     }
@@ -19,7 +20,7 @@ const StartScreen = () => {
   const validateEmail = (email) => {
     const emailRegex = /\S+@\S+\.\S+/;
     if (!emailRegex.test(email)) {
-      setErrors((prevErrors) => ({ ...prevErrors, email: 'Invalid email' }));
+      setErrors((prevErrors) => ({ ...prevErrors, email: 'Invalid email address' }));
     } else {
       setErrors((prevErrors) => ({ ...prevErrors, email: '' }));
     }
@@ -38,8 +39,7 @@ const StartScreen = () => {
     if (!name || !email || !phone || errors.name || errors.email || errors.phone) {
       Alert.alert('Invalid input', 'Please correct the errors before registering');
     } else {
-      Alert.alert('Success', 'Registration successful');
-      // Navigate to Confirm screen (to be implemented)
+      onRegister(); // Call the prop function to switch the screen
     }
   };
 
@@ -53,9 +53,11 @@ const StartScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
+      <Text style={styles.title}>Welcome</Text>
+
+      <Text style={styles.label}>Name</Text>
       <TextInput
-        placeholder="Name"
+        placeholder="Enter your name"
         value={name}
         onChangeText={(text) => {
           setName(text);
@@ -65,8 +67,9 @@ const StartScreen = () => {
       />
       {errors.name ? <Text style={styles.errorText}>{errors.name}</Text> : null}
 
+      <Text style={styles.label}>Email address</Text>
       <TextInput
-        placeholder="Email"
+        placeholder="Enter your email"
         value={email}
         onChangeText={(text) => {
           setEmail(text);
@@ -76,8 +79,9 @@ const StartScreen = () => {
       />
       {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
+      <Text style={styles.label}>Phone Number</Text>
       <TextInput
-        placeholder="Phone"
+        placeholder="Enter your phone number"
         keyboardType="numeric"
         value={phone}
         onChangeText={(text) => {
@@ -89,37 +93,89 @@ const StartScreen = () => {
       {errors.phone ? <Text style={styles.errorText}>{errors.phone}</Text> : null}
 
       <View style={styles.checkboxContainer}>
-        <Text>Accept terms</Text>
-        <Button title={checkboxSelected ? "Uncheck" : "Check"} onPress={() => setCheckboxSelected(!checkboxSelected)} />
+        <Checkbox
+          value={checkboxSelected}
+          onValueChange={setCheckboxSelected}
+          color={checkboxSelected ? '#4630EB' : undefined}
+        />
+        <Text style={styles.checkboxLabel}>I am not a robot</Text>
       </View>
 
-      <Button title="Reset" onPress={handleReset} />
-      <Button title="Register" onPress={handleRegister} disabled={!checkboxSelected} />
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={handleReset} style={styles.resetButton}>
+          <Text style={styles.buttonText}>Reset</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleRegister}
+          style={[styles.registerButton, { opacity: checkboxSelected ? 1 : 0.5 }]}
+          disabled={!checkboxSelected}
+        >
+          <Text style={styles.buttonText}>Register</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    justifyContent: 'center',
     padding: 20,
+    backgroundColor: '#e0f7fa',
   },
   title: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+    color: '#4a148c',
+  },
+  label: {
+    fontSize: 16,
+    color: '#4a148c',
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    marginVertical: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: '#4a148c',
+    paddingVertical: 8,
+    marginVertical: 10,
+    fontSize: 18,
   },
   errorText: {
     color: 'red',
+    fontSize: 14,
   },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 10,
+    marginVertical: 20,
+  },
+  checkboxLabel: {
+    marginLeft: 8,
+    fontSize: 16,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  resetButton: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    width: '40%',
+  },
+  registerButton: {
+    backgroundColor: 'blue',
+    padding: 10,
+    borderRadius: 5,
+    width: '40%',
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 18,
   },
 });
 
