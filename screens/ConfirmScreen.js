@@ -16,11 +16,11 @@ const ConfirmScreen = ({ visible, userInfo, onEdit, onConfirm }) => {
           <Text style={styles.info}>Phone: {userInfo.phone}</Text>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={onEdit} style={styles.editButton}>
-              <Text style={styles.buttonText}>Edit</Text>
+            <TouchableOpacity onPress={onEdit} style={styles.goBackButton}>
+              <Text style={styles.buttonText}>Go Back</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={onConfirm} style={styles.confirmButton}>
-              <Text style={styles.buttonText}>Confirm</Text>
+            <TouchableOpacity onPress={onConfirm} style={styles.continueButton}>
+              <Text style={styles.buttonText}>Continue</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -60,13 +60,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 20,
   },
-  editButton: {
+  goBackButton: {
     backgroundColor: 'red',
     padding: 10,
     borderRadius: 5,
     width: '40%',
   },
-  confirmButton: {
+  continueButton: {
     backgroundColor: 'blue',
     padding: 10,
     borderRadius: 5,
