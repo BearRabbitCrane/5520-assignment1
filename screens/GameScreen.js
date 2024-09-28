@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
-const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
+const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
   const [gameStarted, setGameStarted] = useState(false);
   const [guess, setGuess] = useState('');
   const [feedback, setFeedback] = useState('');
@@ -16,7 +16,6 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
   // Function to start the game and timer
   const startGame = () => {
     setGameStarted(true);
-    // Set an interval for the countdown timer
     const interval = setInterval(() => {
       setTimer((prevTimer) => {
         if (prevTimer === 0) {
@@ -73,20 +72,23 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
     setGuess(''); // Clear the guess input
   };
 
-  // Function to end the game
-  const endGame = () => {
-    setGameOver(true);
-  };
-
   // Display game over card with attempts used if the user guessed correctly
   if (gameOver) {
+    const imageUrl = `https://picsum.photos/id/${chosenNumber}/100/100`; // Construct the image URL
+
     return (
       <View style={styles.container}>
         <View style={styles.card}>
           <Text style={styles.text}>Congratulations! You guessed the number correctly.</Text>
           <Text style={styles.text}>Attempts used: {attemptsUsed}</Text>
-          <TouchableOpacity onPress={onRestart} style={styles.buttonActive}>
-            <Text style={styles.buttonText}>RESTART</Text>
+          {/* Display the image */}
+          <Image
+            source={{ uri: imageUrl }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+          <TouchableOpacity onPress={onNewGame} style={styles.buttonActive}>
+            <Text style={styles.buttonText}>NEW GAME</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -206,7 +208,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonDisabled: {
-    backgroundColor: '#d3d3d3', // Gray color to indicate disabled state
+    backgroundColor: '#d3d3d3',
     padding: 10,
     marginVertical: 10,
     borderRadius: 5,
@@ -235,6 +237,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'green',
     marginVertical: 20,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginVertical: 10,
   },
 });
 
