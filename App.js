@@ -1,31 +1,46 @@
 import React, { useState } from 'react';
-import { SafeAreaView, Alert, StyleSheet } from 'react-native';
+import { SafeAreaView, Text } from 'react-native';
 import StartScreen from './screens/StartScreen';
+import ConfirmScreen from './screens/ConfirmScreen';
 
 export default function App() {
-  // This state controls whether the user has successfully registered
+  const [userInfo, setUserInfo] = useState({
+    name: '',
+    email: '',
+    phone: ''
+  });
   const [isRegistered, setIsRegistered] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  // Function to handle registration success from StartScreen
-  const handleRegister = () => {
+  const handleRegister = (name, email, phone) => {
+    setUserInfo({ name, email, phone });
+    setShowConfirmModal(true);
+  };
+
+  const handleEdit = () => {
+    setShowConfirmModal(false);
+  };
+
+  const handleConfirm = () => {
+    setShowConfirmModal(false);
     setIsRegistered(true);
-    Alert.alert("Success", "You have successfully registered!");
+    // Continue to the next screen (e.g., the game screen)
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{ flex: 1 }}>
       {!isRegistered ? (
         <StartScreen onRegister={handleRegister} />
       ) : (
-        Alert.alert('You are already registered!')
+        // Here you could show the Game screen or another screen
+        <Text>Game Screen Placeholder</Text>
       )}
+      <ConfirmScreen
+        visible={showConfirmModal}
+        userInfo={userInfo}
+        onEdit={handleEdit}
+        onConfirm={handleConfirm}
+      />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-});
