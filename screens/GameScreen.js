@@ -10,10 +10,13 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
   const [hintUsed, setHintUsed] = useState(false);
   const [showFeedbackCard, setShowFeedbackCard] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [attemptsUsed, setAttemptsUsed] = useState(0);
   const lastDigit = userInfo?.phone[userInfo.phone.length - 1];
 
+  // Function to start the game and timer
   const startGame = () => {
     setGameStarted(true);
+    // Set an interval for the countdown timer
     const interval = setInterval(() => {
       setTimer((prevTimer) => {
         if (prevTimer === 0) {
@@ -26,29 +29,35 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
     }, 1000);
   };
 
+  // Function to handle the user's guess input
   const handleGuess = () => {
     const numGuess = parseInt(guess, 10);
+    // Validate that the input is a number between 1 and 100
     if (isNaN(numGuess) || numGuess < 1 || numGuess > 100) {
       Alert.alert('Invalid Input', 'Please enter a number between 1 and 100.');
       return;
     }
+    // Check if the user has remaining attempts and time
     if (attempts > 0 && timer > 0) {
+      setAttemptsUsed(4 - attempts + 1); // Update the number of attempts used
+      // If the guess is correct, set feedback and end the game
       if (numGuess === chosenNumber) {
         setFeedback('You guessed correct!');
         setGameOver(true);
       } else if (numGuess < chosenNumber) {
-        setFeedback('You did not guess correct! You should guess higher!');
-        setShowFeedbackCard(true);
+        setFeedback('You did not guess correctly! Guess higher.');
+        setShowFeedbackCard(true); // Show the feedback card
       } else {
-        setFeedback('You did not guess correct! You should guess lower!');
-        setShowFeedbackCard(true);
+        setFeedback('You did not guess correctly! Guess lower.');
+        setShowFeedbackCard(true); // Show the feedback card
       }
-      setAttempts(attempts - 1);
+      setAttempts(attempts - 1); // Reduce the number of remaining attempts
     } else {
       setFeedback('No more attempts or time left!');
     }
   };
 
+  // Function to provide a hint to the user
   const useHint = () => {
     if (!hintUsed) {
       setHintUsed(true);
@@ -58,34 +67,42 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
     }
   };
 
+  // Function to try guessing again (reset the input)
   const tryAgain = () => {
     setShowFeedbackCard(false);
-    setGuess('');
+    setGuess(''); // Clear the guess input
   };
 
+  // Function to end the game
   const endGame = () => {
     setGameOver(true);
   };
 
+  // Display game over card with attempts used if the user guessed correctly
   if (gameOver) {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>Game Over! The number was {chosenNumber}</Text>
-        <TouchableOpacity onPress={onRestart} style={styles.buttonActive}>
-          <Text style={styles.buttonText}>RESTART</Text>
-        </TouchableOpacity>
+        <View style={styles.card}>
+          <Text style={styles.text}>Congratulations! You guessed the number correctly.</Text>
+          <Text style={styles.text}>Attempts used: {attemptsUsed}</Text>
+          <TouchableOpacity onPress={onRestart} style={styles.buttonActive}>
+            <Text style={styles.buttonText}>RESTART</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
+      {/* Restart button in the top-right corner */}
       <View style={styles.restartContainer}>
         <TouchableOpacity onPress={onRestart} style={styles.restartButton}>
           <Text style={styles.restartButtonText}>RESTART</Text>
         </TouchableOpacity>
       </View>
 
+      {/* If the game hasn't started yet */}
       {!gameStarted ? (
         <View style={styles.card}>
           <Text style={styles.text}>Guess a number between 1 & 100 that is a multiple of {lastDigit}</Text>
@@ -94,6 +111,7 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
           </TouchableOpacity>
         </View>
       ) : showFeedbackCard ? (
+        // Show feedback card when the guess is incorrect
         <View style={styles.card}>
           <Text style={styles.text}>{feedback}</Text>
           <TouchableOpacity onPress={tryAgain} style={styles.buttonActive}>
@@ -104,10 +122,11 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
           </TouchableOpacity>
         </View>
       ) : (
+        // Main game screen where the user can guess
         <View style={styles.card}>
           <Text style={styles.text}>Guess a number between 1 & 100 that is a multiple of {lastDigit}</Text>
-          
-          {/* Updated TextInput */}
+
+          {/* Input for the user's guess */}
           <TextInput
             style={styles.inputUnderline}
             placeholder="Enter your guess"
@@ -115,22 +134,25 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo }) => {
             onChangeText={setGuess}
             keyboardType="numeric"
           />
-          
+
           <Text style={styles.text}>Attempts left: {attempts}</Text>
           <Text style={styles.text}>Timer: {timer}s</Text>
 
-          {/* Use hint button, visible even if disabled */}
+          {/* Button to use a hint */}
           <TouchableOpacity
             onPress={useHint}
             style={hintUsed ? styles.buttonDisabled : styles.buttonActive}
-            disabled={hintUsed}>
+            disabled={hintUsed}
+          >
             <Text style={styles.buttonText}>USE A HINT</Text>
           </TouchableOpacity>
 
+          {/* Button to submit the guess */}
           <TouchableOpacity onPress={handleGuess} style={styles.buttonActive}>
             <Text style={styles.buttonText}>SUBMIT GUESS</Text>
           </TouchableOpacity>
 
+          {/* Display feedback if there is any */}
           {feedback ? <Text style={styles.feedback}>{feedback}</Text> : null}
         </View>
       )}
