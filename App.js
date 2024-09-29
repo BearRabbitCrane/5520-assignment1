@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { SafeAreaView, Text } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import StartScreen from './screens/StartScreen';
 import ConfirmScreen from './screens/ConfirmScreen';
+import GameScreen from './screens/GameScreen';
 
 export default function App() {
   const [userInfo, setUserInfo] = useState({
@@ -11,19 +12,45 @@ export default function App() {
   });
   const [isRegistered, setIsRegistered] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [chosenNumber, setChosenNumber] = useState(null); // The number to guess
 
+  // Function to handle registration and number generation
   const handleRegister = (name, email, phone) => {
-    setUserInfo({ name, email, phone }); // Save the user input into state
-    setShowConfirmModal(true); // Show the confirm modal
+    setUserInfo({ name, email, phone });
+    generateNumberToGuess(phone);  // Generate the number when the user confirms their info
+    setShowConfirmModal(true);  // Show the confirm modal
+  };
+
+  // Generate the number based on the last digit of the phone number
+  const generateNumberToGuess = (phone) => {
+    const lastDigit = phone[phone.length - 1]; // Get the last digit of the phone number
+    const possibleNumbers = [];
+    for (let i = 1; i <= 100; i++) {
+      if (i % lastDigit === 0) {
+        possibleNumbers.push(i);
+      }
+    }
+    const randomIndex = Math.floor(Math.random() * possibleNumbers.length);
+    setChosenNumber(possibleNumbers[randomIndex]); // Pick a random number from the possibilities
   };
 
   const handleEdit = () => {
-    setShowConfirmModal(false); // Close the modal and return to StartScreen
+    setShowConfirmModal(false);  // Close the modal and go back to StartScreen
   };
 
   const handleConfirm = () => {
     setShowConfirmModal(false);
-    setIsRegistered(true); // Confirm the information and proceed to the game screen
+    setIsRegistered(true); // Confirm the information and proceed to the GameScreen
+  };
+
+  const handleRestart = () => {
+    setIsRegistered(false); // Reset to StartScreen
+    setUserInfo({ name: '', email: '', phone: '' }); // Clear user info
+    setChosenNumber(null);  // Reset the chosen number
+  };
+
+  const handleNewGame = () => {
+    generateNumberToGuess(userInfo.phone); // Generate a new number based on the phone number
   };
 
   return (
@@ -31,11 +58,17 @@ export default function App() {
       {!isRegistered ? (
         <StartScreen onRegister={handleRegister} />
       ) : (
-        <Text>Game Screen Placeholder</Text>  // Placeholder for the Game screen
+        // Pass userInfo and chosenNumber to GameScreen to avoid 'undefined' error
+        <GameScreen 
+          chosenNumber={chosenNumber} 
+          onRestart={handleRestart} 
+          onNewGame={handleNewGame} // Pass the new game handler
+          userInfo={userInfo} 
+        />
       )}
       <ConfirmScreen
         visible={showConfirmModal}
-        userInfo={userInfo}  // Pass user data to ConfirmScreen
+        userInfo={userInfo}
         onEdit={handleEdit}
         onConfirm={handleConfirm}
       />
