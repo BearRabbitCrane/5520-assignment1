@@ -2,17 +2,20 @@ import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import colors from '../components/colors'; // Import colors
 
+// Input component that is reusable and displays validation errors
 const Input = ({ label, value, onChangeText, placeholder, keyboardType, error }) => {
   return (
     <View>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         style={styles.input}
-        placeholder={placeholder}
-        value={value}
-        onChangeText={onChangeText}
-        keyboardType={keyboardType}
+        placeholder={placeholder} // Placeholder text
+        value={value} // Current value of the input
+        onChangeText={onChangeText} // Update the value as the user types
+        keyboardType={keyboardType} // Set the keyboard type (e.g., numeric, default)
       />
+      
+      {/* Display error message if validation fails */}
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>
   );

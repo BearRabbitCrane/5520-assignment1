@@ -8,12 +8,14 @@ import GradientBackground from '../components/GradientBackground'; // Import the
 import colors from '../components/colors';
 
 const StartScreen = ({ onRegister }) => {
+  // State hooks for form data and error handling
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [checkboxSelected, setCheckboxSelected] = useState(false);
   const [errors, setErrors] = useState({ name: '', email: '', phone: '' });
 
+  // Validation for name input
   const validateName = (name) => {
     if (!name || name.length <= 1 || !isNaN(name)) {
       setErrors((prevErrors) => ({ ...prevErrors, name: 'Please enter a valid name' }));
@@ -22,6 +24,7 @@ const StartScreen = ({ onRegister }) => {
     }
   };
 
+  // Validation for email input using regex
   const validateEmail = (email) => {
     const emailRegex = /\S+@\S+\.\S+/;
     if (!emailRegex.test(email)) {
@@ -31,6 +34,7 @@ const StartScreen = ({ onRegister }) => {
     }
   };
 
+  // Validation for phone input
   const validatePhone = (phone) => {
     const phoneRegex = /^\d{10}$/;
     if (!phoneRegex.test(phone) || phone[9] === '0' || phone[9] === '1') {
@@ -40,6 +44,7 @@ const StartScreen = ({ onRegister }) => {
     }
   };
 
+  // Handle form submission and registration
   const handleRegister = () => {
     if (!name || !email || !phone || errors.name || errors.email || errors.phone) {
       Alert.alert('Invalid input', 'Please correct the errors before registering');
@@ -48,6 +53,7 @@ const StartScreen = ({ onRegister }) => {
     }
   };
 
+  // Handle form reset
   const handleReset = () => {
     setName('');
     setEmail('');
@@ -59,6 +65,8 @@ const StartScreen = ({ onRegister }) => {
   return (
     <GradientBackground>
       <Text style={styles.title}>Welcome</Text>
+
+      {/* Input card for form */}
       <Card>
         <Input
           label="Name"
@@ -94,6 +102,7 @@ const StartScreen = ({ onRegister }) => {
           error={errors.phone}
         />
 
+        {/* Checkbox for robot verification */}
         <View style={styles.checkboxContainer}>
           <Checkbox
             value={checkboxSelected}
@@ -103,6 +112,7 @@ const StartScreen = ({ onRegister }) => {
           <Text style={styles.checkboxLabel}>I am not a robot</Text>
         </View>
 
+        {/* Buttons for reset and register */}
         <View style={styles.buttonContainer}>
           <Button title="Reset" onPress={handleReset} style={styles.resetButton} />
           <Button

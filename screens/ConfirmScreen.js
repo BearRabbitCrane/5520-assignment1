@@ -16,10 +16,12 @@ const ConfirmScreen = ({ visible, userInfo, onEdit, onConfirm }) => {
           <View style={styles.modalContent}>
             <Card>
               <Text style={styles.title}>Confirm Information</Text>
+              {/* Display user info */}
               <Text style={styles.info}>Name: {userInfo.name}</Text>
               <Text style={styles.info}>Email: {userInfo.email}</Text>
               <Text style={styles.info}>Phone: {userInfo.phone}</Text>
 
+              {/* Buttons for navigation */}
               <View style={styles.buttonContainer}>
                 <Button title="Go Back" onPress={onEdit} style={styles.goBackButton} />
                 <Button title="Continue" onPress={onConfirm} style={styles.continueButton} />

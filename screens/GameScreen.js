@@ -6,9 +6,10 @@ import Input from '../components/Input';
 import GradientBackground from '../components/GradientBackground'; // Import GradientBackground
 import colors from '../components/colors';
 
-const sadSmiley = require('../assets/sad_smiley.png'); // Ensure the path is correct
+const sadSmiley = require('../assets/sad_smiley.png'); // Path to sad smiley image
 
 const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
+  // State hooks to manage the game logic and user interaction
   const [gameStarted, setGameStarted] = useState(false);
   const [guess, setGuess] = useState('');
   const [feedback, setFeedback] = useState('');
@@ -20,7 +21,7 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
   const [victory, setVictory] = useState(false);
   const [attemptsUsed, setAttemptsUsed] = useState(0);
   const [gameOverReason, setGameOverReason] = useState('');
-  const lastDigit = userInfo?.phone[userInfo.phone.length - 1];
+  const lastDigit = userInfo?.phone[userInfo.phone.length - 1]; // Extract the last digit of the phone number
 
   // Timer effect to automatically trigger Game Over when the timer reaches 0
   useEffect(() => {
@@ -44,10 +45,11 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
     }, 1000);
   };
 
-  // Handle the user's guess
+  // Handle the user's guess input and feedback
   const handleGuess = () => {
     const numGuess = parseInt(guess, 10);
 
+    // Input validation
     if (isNaN(numGuess) || numGuess < 1 || numGuess > 100) {
       Alert.alert('Invalid Input', 'Please enter a number between 1 and 100.');
       return;
@@ -55,12 +57,14 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
 
     setAttemptsUsed(4 - attempts + 1);
 
+    // Check if the guess is correct
     if (numGuess === chosenNumber) {
       setFeedback('You guessed correct!');
       setVictory(true); 
       return;
     }
 
+    // Handle incorrect guess and update feedback
     if (attempts - 1 > 0) {
       if (numGuess < chosenNumber) {
         setFeedback('You did not guess correct! You should guess higher.');
@@ -108,6 +112,7 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
     onNewGame(); // Call the parent to generate a new number
   };
 
+  // Game victory screen
   if (victory) {
     const imageUrl = `https://picsum.photos/id/${chosenNumber}/100/100`;
 
@@ -134,6 +139,7 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
     );
   }
 
+  // Game over screen
   if (gameOver) {
     return (
       <GradientBackground>
