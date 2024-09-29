@@ -1,25 +1,39 @@
 import React from 'react';
-import { TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
 
-const Input = ({ placeholder, value, onChangeText, keyboardType = 'default', style = {} }) => {
+const Input = ({ label, value, onChangeText, placeholder, keyboardType, error }) => {
   return (
-    <TextInput
-      placeholder={placeholder}
-      value={value}
-      onChangeText={onChangeText}
-      keyboardType={keyboardType}
-      style={[styles.input, style]}
-    />
+    <View>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput
+        style={styles.input}
+        placeholder={placeholder}
+        value={value}
+        onChangeText={onChangeText}
+        keyboardType={keyboardType}
+      />
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  label: {
+    fontSize: 16,
+    color: '#4a148c',
+    marginBottom: 5,
+  },
   input: {
     borderBottomWidth: 1,
     borderBottomColor: '#4a148c',
     paddingVertical: 8,
     marginVertical: 10,
     fontSize: 18,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginBottom: 10,
   },
 });
 

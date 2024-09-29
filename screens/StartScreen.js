@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, Alert, StyleSheet } from 'react-native';
 import Checkbox from 'expo-checkbox';
+import Card from '../components/Card';
+import Input from '../components/Input';
+import Button from '../components/Button';
 
 const StartScreen = ({ onRegister }) => {
   const [name, setName] = useState('');
@@ -53,46 +56,44 @@ const StartScreen = ({ onRegister }) => {
 
   return (
     <View style={styles.container}>
+      {/* Welcome Text */}
       <Text style={styles.title}>Welcome</Text>
 
-      {/* Card with rounded corners and shadow */}
-      <View style={styles.card}>
-        <Text style={styles.label}>Name</Text>
-        <TextInput
-          placeholder="Enter your name"
+      {/* Card containing input fields and buttons */}
+      <Card>
+        <Input
+          label="Name"
           value={name}
           onChangeText={(text) => {
             setName(text);
             validateName(text);
           }}
-          style={styles.input}
+          placeholder="Enter your name"
+          error={errors.name}
         />
-        {errors.name ? <Text style={styles.errorText}>{errors.name}</Text> : null}
 
-        <Text style={styles.label}>Email address</Text>
-        <TextInput
-          placeholder="Enter your email"
+        <Input
+          label="Email address"
           value={email}
           onChangeText={(text) => {
             setEmail(text);
             validateEmail(text);
           }}
-          style={styles.input}
+          placeholder="Enter your email"
+          error={errors.email}
         />
-        {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
-        <Text style={styles.label}>Phone Number</Text>
-        <TextInput
-          placeholder="Enter your phone number"
-          keyboardType="numeric"
+        <Input
+          label="Phone Number"
           value={phone}
           onChangeText={(text) => {
             setPhone(text);
             validatePhone(text);
           }}
-          style={styles.input}
+          placeholder="Enter your phone number"
+          keyboardType="numeric"
+          error={errors.phone}
         />
-        {errors.phone ? <Text style={styles.errorText}>{errors.phone}</Text> : null}
 
         <View style={styles.checkboxContainer}>
           <Checkbox
@@ -104,18 +105,15 @@ const StartScreen = ({ onRegister }) => {
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleReset} style={styles.resetButton}>
-            <Text style={styles.buttonText}>Reset</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          <Button title="Reset" onPress={handleReset} style={styles.resetButton} />
+          <Button
+            title="Register"
             onPress={handleRegister}
-            style={[styles.registerButton, { opacity: checkboxSelected ? 1 : 0.5 }]}
+            style={styles.registerButton}
             disabled={!checkboxSelected}
-          >
-            <Text style={styles.buttonText}>Register</Text>
-          </TouchableOpacity>
+          />
         </View>
-      </View>
+      </Card>
     </View>
   );
 };
@@ -134,34 +132,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
     color: '#4a148c',
-  },
-  card: {
-    width: '90%',
-    padding: 20,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5, // Android shadow
-  },
-  label: {
-    fontSize: 16,
-    color: '#4a148c',
-    marginBottom: 5,
-  },
-  input: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#4a148c',
-    paddingVertical: 8,
-    marginVertical: 10,
-    fontSize: 18,
-  },
-  errorText: {
-    color: 'red',
-    fontSize: 14,
-    marginBottom: 10,
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -188,11 +158,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     width: '40%',
-  },
-  buttonText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: 18,
   },
 });
 

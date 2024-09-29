@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, Alert, StyleSheet, Image } from 'react-native';
+import Card from '../components/Card';
+import Button from '../components/Button';
+import Input from '../components/Input';
 
-// Import the sad smiley face image using require
-const sadSmiley = require('../assets/sad_smiley.png');  // Ensure the path is correct
+const sadSmiley = require('../assets/sad_smiley.png'); // Ensure the path is correct
 
 const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
   const [gameStarted, setGameStarted] = useState(false);
@@ -13,18 +15,18 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
   const [hintUsed, setHintUsed] = useState(false);
   const [showFeedbackCard, setShowFeedbackCard] = useState(false);
   const [gameOver, setGameOver] = useState(false);
-  const [gameOverReason, setGameOverReason] = useState('');
+  const [victory, setVictory] = useState(false);
   const [attemptsUsed, setAttemptsUsed] = useState(0);
+  const [gameOverReason, setGameOverReason] = useState('');
   const lastDigit = userInfo?.phone[userInfo.phone.length - 1];
 
   // Timer effect to automatically trigger Game Over when the timer reaches 0
   useEffect(() => {
-    if (timer === 0) {
+    if (timer === 0 && !victory) {
       setGameOverReason('Timer ran out.');
       setGameOver(true);
     }
-  }, [timer]); 
-  // Listen to changes in the timer
+  }, [timer]);
 
   // Function to start the game and timer
   const startGame = () => {
@@ -43,32 +45,33 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
   // Handle the user's guess
   const handleGuess = () => {
     const numGuess = parseInt(guess, 10);
+
     if (isNaN(numGuess) || numGuess < 1 || numGuess > 100) {
       Alert.alert('Invalid Input', 'Please enter a number between 1 and 100.');
       return;
     }
 
-    if (attempts - 1 === 0 && timer > 0 && numGuess !== chosenNumber) {
+    setAttemptsUsed(4 - attempts + 1);
+
+    if (numGuess === chosenNumber) {
+      setFeedback('You guessed correct!');
+      setVictory(true); 
+      return;
+    }
+
+    if (attempts - 1 > 0) {
+      if (numGuess < chosenNumber) {
+        setFeedback('You did not guess correct! You should guess higher.');
+      } else {
+        setFeedback('You did not guess correct! You should guess lower.');
+      }
+      setShowFeedbackCard(true);
+    } else {
       setGameOverReason('You ran out of attempts.');
       setGameOver(true);
     }
 
-    if (attempts > 0 && timer > 0) {
-      setAttemptsUsed(4 - attempts + 1); // Track the number of attempts used
-      if (numGuess === chosenNumber) {
-        setFeedback('You guessed correct!');
-        setGameOver(true); // End the game when user guesses correctly
-      } else if (numGuess < chosenNumber) {
-        setFeedback('You did not guess correct! You should guess higher.');
-        setShowFeedbackCard(true);
-      } else {
-        setFeedback('You did not guess correct! You should guess lower.');
-        setShowFeedbackCard(true);
-      }
-
-      // Update attempts and check if the user ran out of attempts
-      setAttempts(attempts - 1);
-    }
+    setAttempts(attempts - 1);
   };
 
   // Provide a hint for the user
@@ -87,88 +90,89 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
     setGuess('');
   };
 
-  // End the game when the user chooses to do so
-  const endGame = () => {
-    setGameOverReason('You ended the game.');
-    setGameOver(true);
+  // Reset all game states and start a new game
+  const resetGame = () => {
+    setGameStarted(false);
+    setGuess('');
+    setFeedback('');
+    setAttempts(4);
+    setTimer(60);
+    setHintUsed(false);
+    setShowFeedbackCard(false);
+    setGameOver(false);
+    setVictory(false);
+    setAttemptsUsed(0);
+    setGameOverReason('');
+    onNewGame(); // Call the parent to generate a new number
   };
 
-  // Display Game Over screen
+  if (victory) {
+    const imageUrl = `https://picsum.photos/id/${chosenNumber}/100/100`;
+
+    return (
+      <View style={styles.container}>
+        <Card>
+          <Text style={styles.text}>Congratulations! You guessed the correct number!</Text>
+          <Text style={styles.text}>Attempts used: {attemptsUsed}</Text>
+
+          <Image
+            source={{ uri: imageUrl }}
+            style={styles.image}
+            onError={() => Alert.alert('Image load error', 'Unable to load image.')}
+          />
+
+          <Button title="NEW GAME" onPress={resetGame} style={styles.buttonActive} />
+        </Card>
+      </View>
+    );
+  }
+
   if (gameOver) {
     return (
       <View style={styles.container}>
-        <View style={styles.card}>
+        <Card>
           <Text style={styles.text}>The game is over</Text>
-          <Text style={styles.text}>{gameOverReason}</Text> 
-          {/* Display the reason for game over */}
+          <Text style={styles.text}>{gameOverReason}</Text>
           <Text style={styles.text}>The number was: {chosenNumber}</Text>
           <Text style={styles.text}>Attempts used: {attemptsUsed}</Text>
 
-          {/* Display the sad smiley face image */}
-          <Image source={sadSmiley} style={styles.sadSmiley} />
-
-          {/* Restart or New Game Button */}
-          <TouchableOpacity
-            onPress={() => {
-              // Reset all game states and call onNewGame to generate a new number
-              setGameStarted(false);
-              setGuess('');
-              setFeedback('');
-              setAttempts(4);
-              setTimer(60);
-              setHintUsed(false);
-              setShowFeedbackCard(false);
-              setGameOver(false);
-              setAttemptsUsed(0);
-              onNewGame(); // Call the parent function to generate a new number
-            }}
-            style={styles.buttonActive}
-          >
-            <Text style={styles.buttonText}>NEW GAME</Text>
-          </TouchableOpacity>
-        </View>
+          <Button title="NEW GAME" onPress={resetGame} style={styles.buttonActive} />
+        </Card>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      {/* Restart button in the top-right corner */}
       <View style={styles.restartContainer}>
-        <TouchableOpacity onPress={onRestart} style={styles.restartButton}>
-          <Text style={styles.restartButtonText}>RESTART</Text>
-        </TouchableOpacity>
+        <Button title="RESTART" onPress={onRestart} style={styles.restartButton} />
       </View>
 
       {!gameStarted ? (
-        <View style={styles.card}>
-          <Text style={styles.text}>Guess a number between 1 & 100 that is a multiple of {lastDigit}</Text>
-          <TouchableOpacity onPress={startGame} style={styles.buttonActive}>
-            <Text style={styles.buttonText}>START</Text>
-          </TouchableOpacity>
-        </View>
+        <Card>
+          <Text style={styles.text}>
+            Guess a number between 1 & 100 that is a multiple of {lastDigit}
+          </Text>
+          <Button title="START" onPress={startGame} style={styles.buttonActive} />
+        </Card>
       ) : showFeedbackCard ? (
-        <View style={styles.card}>
+        <Card>
           <Text style={styles.text}>{feedback}</Text>
-          {/* Show Try Again if there are attempts and time */}
-          {attempts > 0 && timer > 0 ? (
-            <TouchableOpacity onPress={tryAgain} style={styles.buttonActive}>
-              <Text style={styles.buttonText}>Try Again</Text>
-            </TouchableOpacity>
-          ) : null}
-          <TouchableOpacity onPress={endGame} style={styles.buttonActive}>
-            <Text style={styles.buttonText}>End Game</Text>
-          </TouchableOpacity>
-        </View>
+          {attempts > 0 && timer > 0 && (
+            <Button title="Try Again" onPress={tryAgain} style={styles.buttonActive} />
+          )}
+          <Button title="End Game" onPress={() => setGameOver(true)} style={styles.buttonActive} />
+        </Card>
       ) : (
-        <View style={styles.card}>
-          <Text style={styles.text}>Guess a number between 1 & 100 that is a multiple of {lastDigit}</Text>
+        <Card>
+          <Text style={styles.text}>
+            Guess a number between 1 & 100 that is a multiple of {lastDigit}
+          </Text>
 
-          {/* Input for the user's guess */}
-          <TextInput
-            style={styles.inputUnderline}
-            placeholder="Enter your guess"
+          <Input
+            label=""
             value={guess}
+            placeholder="Enter your guess"
             onChangeText={setGuess}
             keyboardType="numeric"
           />
@@ -176,20 +180,15 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
           <Text style={styles.text}>Attempts left: {attempts}</Text>
           <Text style={styles.text}>Timer: {timer}s</Text>
 
-          {/* Use hint button */}
-          <TouchableOpacity
+          <Button
+            title="USE A HINT"
             onPress={useHint}
             style={hintUsed ? styles.buttonDisabled : styles.buttonActive}
             disabled={hintUsed}
-          >
-            <Text style={styles.buttonText}>USE A HINT</Text>
-          </TouchableOpacity>
+          />
 
-          {/* Submit guess button */}
-          <TouchableOpacity onPress={handleGuess} style={styles.buttonActive}>
-            <Text style={styles.buttonText}>SUBMIT GUESS</Text>
-          </TouchableOpacity>
-        </View>
+          <Button title="SUBMIT GUESS" onPress={handleGuess} style={styles.buttonActive} />
+        </Card>
       )}
     </View>
   );
@@ -203,19 +202,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#a0d8f3',
     padding: 20,
   },
-  card: {
-    width: '90%',
-    padding: 20,
-    backgroundColor: '#b0b0b0',
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
-    alignItems: 'center',
-    position: 'relative',
-  },
   text: {
     fontSize: 22,
     fontWeight: 'bold',
@@ -223,14 +209,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#4a148c',
   },
-  inputUnderline: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#4a148c',
-    width: '80%',
-    marginBottom: 20,
-    fontSize: 20,
-    textAlign: 'center',
-    paddingBottom: 5,
+  image: {
+    width: 100,
+    height: 100,
+    marginVertical: 10,
+    alignSelf: 'center',
   },
   buttonActive: {
     backgroundColor: '#0000ff',
@@ -239,6 +222,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: '80%',
     alignItems: 'center',
+    alignSelf: 'center',
   },
   buttonDisabled: {
     backgroundColor: '#d3d3d3',
@@ -247,10 +231,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: '80%',
     alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
   },
   restartContainer: {
     alignItems: 'flex-end',
@@ -261,15 +241,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
-  },
-  restartButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  sadSmiley: {
-    width: 100,
-    height: 100,
-    marginVertical: 10,
   },
 });
 
