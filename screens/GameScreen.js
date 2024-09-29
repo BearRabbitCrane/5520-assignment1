@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity, Image } from 'react-native';
+
+// Import the sad smiley face image using require
+const sadSmiley = require('../assets/sad_smiley.png');  // Ensure the path is correct
 
 const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
   const [gameStarted, setGameStarted] = useState(false);
@@ -86,11 +89,8 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
           <Text style={styles.text}>The number was: {chosenNumber}</Text>
           <Text style={styles.text}>Attempts used: {attemptsUsed}</Text>
 
-          {/* Optionally, show an image based on the number */}
-          <Image
-            source={{ uri: `https://picsum.photos/id/${chosenNumber}/100/100` }}
-            style={styles.image}
-          />
+          {/* Display the sad smiley face image */}
+          <Image source={sadSmiley} style={styles.sadSmiley} />
 
           {/* Restart or New Game Button */}
           <TouchableOpacity onPress={onNewGame} style={styles.buttonActive}>
@@ -130,7 +130,7 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
       ) : (
         <View style={styles.card}>
           <Text style={styles.text}>Guess a number between 1 & 100 that is a multiple of {lastDigit}</Text>
-          
+
           {/* Input for the user's guess */}
           <TextInput
             style={styles.inputUnderline}
@@ -239,6 +239,11 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   image: {
+    width: 100,
+    height: 100,
+    marginVertical: 10,
+  },
+  sadSmiley: {
     width: 100,
     height: 100,
     marginVertical: 10,
