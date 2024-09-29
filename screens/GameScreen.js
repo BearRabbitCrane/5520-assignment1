@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 // Import the sad smiley face image using require
@@ -13,8 +13,18 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
   const [hintUsed, setHintUsed] = useState(false);
   const [showFeedbackCard, setShowFeedbackCard] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [gameOverReason, setGameOverReason] = useState('');
   const [attemptsUsed, setAttemptsUsed] = useState(0);
   const lastDigit = userInfo?.phone[userInfo.phone.length - 1];
+
+  // Timer effect to automatically trigger Game Over when the timer reaches 0
+  useEffect(() => {
+    if (timer === 0) {
+      setGameOverReason('Timer ran out.');
+      setGameOver(true);
+    }
+  }, [timer]); 
+  // Listen to changes in the timer
 
   // Function to start the game and timer
   const startGame = () => {
@@ -23,8 +33,6 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
       setTimer((prevTimer) => {
         if (prevTimer === 0) {
           clearInterval(interval);
-          setGameOver(true); // End the game when the timer reaches 0
-          Alert.alert('Time’s up!', 'You have run out of time.');
           return prevTimer;
         }
         return prevTimer - 1;
@@ -40,22 +48,28 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
       return;
     }
 
+    if (attempts - 1 === 0 && timer > 0 && numGuess != chosenNumber) {
+      setGameOverReason('You ran out of attempts.');
+      setGameOver(true);
+    }
+
     if (attempts > 0 && timer > 0) {
-      setAttemptsUsed(4 - attempts + 1);
+      setAttemptsUsed(4 - attempts + 1); // Track the number of attempts used
       if (numGuess === chosenNumber) {
         setFeedback('You guessed correct!');
         setGameOver(true); // End the game when user guesses correctly
       } else if (numGuess < chosenNumber) {
-        setFeedback('Guess higher!');
+        setFeedback('You did not guess correct! You should guess higher.');
         setShowFeedbackCard(true);
       } else {
-        setFeedback('Guess lower!');
+        setFeedback('You did not guess correct! You should guess lower.');
         setShowFeedbackCard(true);
       }
+
+      // Update attempts and check if the user ran out of attempts
       setAttempts(attempts - 1);
-    } else {
-      setFeedback('No more attempts or time left!');
-      setGameOver(true); // End the game when no attempts or time is left
+
+      
     }
   };
 
@@ -77,6 +91,7 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
 
   // End the game when the user chooses to do so
   const endGame = () => {
+    setGameOverReason('You ended the game.');
     setGameOver(true);
   };
 
@@ -86,6 +101,8 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
       <View style={styles.container}>
         <View style={styles.card}>
           <Text style={styles.text}>The game is over</Text>
+          <Text style={styles.text}>{gameOverReason}</Text> 
+          {/* Display the reason for game over */}
           <Text style={styles.text}>The number was: {chosenNumber}</Text>
           <Text style={styles.text}>Attempts used: {attemptsUsed}</Text>
 
@@ -120,9 +137,12 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
       ) : showFeedbackCard ? (
         <View style={styles.card}>
           <Text style={styles.text}>{feedback}</Text>
-          <TouchableOpacity onPress={tryAgain} style={styles.buttonActive}>
-            <Text style={styles.buttonText}>Try Again</Text>
-          </TouchableOpacity>
+          {/* Show Try Again if there are attempts and time */}
+          {attempts > 0 && timer > 0 ? (
+            <TouchableOpacity onPress={tryAgain} style={styles.buttonActive}>
+              <Text style={styles.buttonText}>Try Again</Text>
+            </TouchableOpacity>
+          ) : null}
           <TouchableOpacity onPress={endGame} style={styles.buttonActive}>
             <Text style={styles.buttonText}>End Game</Text>
           </TouchableOpacity>
@@ -232,16 +252,6 @@ const styles = StyleSheet.create({
   restartButtonText: {
     color: '#fff',
     fontWeight: 'bold',
-  },
-  feedback: {
-    fontSize: 18,
-    color: 'green',
-    marginVertical: 20,
-  },
-  image: {
-    width: 100,
-    height: 100,
-    marginVertical: 10,
   },
   sadSmiley: {
     width: 100,
