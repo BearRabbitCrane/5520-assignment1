@@ -3,6 +3,7 @@ import { View, Text, Alert, StyleSheet, Image } from 'react-native';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import Input from '../components/Input';
+import colors from '../components/colors'; // Import the colors
 
 const sadSmiley = require('../assets/sad_smiley.png'); // Ensure the path is correct
 
@@ -136,6 +137,8 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
           <Text style={styles.text}>The number was: {chosenNumber}</Text>
           <Text style={styles.text}>Attempts used: {attemptsUsed}</Text>
 
+          <Image source={sadSmiley} style={styles.sadSmiley} />
+
           <Button title="NEW GAME" onPress={resetGame} style={styles.buttonActive} />
         </Card>
       </View>
@@ -199,7 +202,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#a0d8f3',
+    backgroundColor: colors.background, // Use color from helper
     padding: 20,
   },
   text: {
@@ -207,7 +210,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
-    color: '#4a148c',
+    color: colors.textPrimary, // Use color from helper
   },
   image: {
     width: 100,
@@ -216,7 +219,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   buttonActive: {
-    backgroundColor: '#0000ff',
+    backgroundColor: colors.primary, // Use color from helper
     padding: 10,
     marginVertical: 10,
     borderRadius: 5,
@@ -225,22 +228,29 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   buttonDisabled: {
-    backgroundColor: '#d3d3d3',
+    backgroundColor: colors.disabled, // Use color from helper
     padding: 10,
     marginVertical: 10,
     borderRadius: 5,
     width: '80%',
     alignItems: 'center',
+    alignSelf: 'center',
   },
   restartContainer: {
     alignItems: 'flex-end',
     width: '90%',
   },
   restartButton: {
-    backgroundColor: '#1e90ff',
+    backgroundColor: colors.restart, // Use color from helper
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
+  },
+  sadSmiley: {
+    width: 100, // Adjust size
+    height: 100, // Adjust size
+    marginVertical: 10,
+    alignSelf: 'center', // Make sure it centers properly
   },
 });
 

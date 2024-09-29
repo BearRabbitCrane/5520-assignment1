@@ -3,6 +3,7 @@ import { View, Text, Modal, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Card from '../components/Card';
 import Button from '../components/Button';
+import colors from '../components/colors'; // Import colors
 
 const ConfirmScreen = ({ visible, userInfo, onEdit, onConfirm }) => {
   return (
@@ -37,10 +38,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: colors.textPrimary,
   },
   info: {
     fontSize: 18,
     marginBottom: 10,
+    color: colors.textPrimary,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -48,13 +51,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   goBackButton: {
-    backgroundColor: 'red',
+    backgroundColor: colors.error,
     padding: 10,
     borderRadius: 5,
     width: '40%',
   },
   continueButton: {
-    backgroundColor: 'blue',
+    backgroundColor: colors.primary,
     padding: 10,
     borderRadius: 5,
     width: '40%',

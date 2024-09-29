@@ -4,6 +4,7 @@ import Checkbox from 'expo-checkbox';
 import Card from '../components/Card';
 import Input from '../components/Input';
 import Button from '../components/Button';
+import colors from '../components/colors'; // Import colors
 
 const StartScreen = ({ onRegister }) => {
   const [name, setName] = useState('');
@@ -42,7 +43,7 @@ const StartScreen = ({ onRegister }) => {
     if (!name || !email || !phone || errors.name || errors.email || errors.phone) {
       Alert.alert('Invalid input', 'Please correct the errors before registering');
     } else {
-      onRegister(name, email, phone); // Pass the user info to the parent component (App.js)
+      onRegister(name, email, phone);
     }
   };
 
@@ -56,10 +57,7 @@ const StartScreen = ({ onRegister }) => {
 
   return (
     <View style={styles.container}>
-      {/* Welcome Text */}
       <Text style={styles.title}>Welcome</Text>
-
-      {/* Card containing input fields and buttons */}
       <Card>
         <Input
           label="Name"
@@ -99,7 +97,7 @@ const StartScreen = ({ onRegister }) => {
           <Checkbox
             value={checkboxSelected}
             onValueChange={setCheckboxSelected}
-            color={checkboxSelected ? '#4630EB' : undefined}
+            color={checkboxSelected ? colors.primary : undefined}
           />
           <Text style={styles.checkboxLabel}>I am not a robot</Text>
         </View>
@@ -124,14 +122,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#e0f7fa',
+    backgroundColor: colors.background,
   },
   title: {
     fontSize: 30,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20,
-    color: '#4a148c',
+    color: colors.textPrimary,
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -141,6 +139,7 @@ const styles = StyleSheet.create({
   checkboxLabel: {
     marginLeft: 8,
     fontSize: 16,
+    color: colors.textPrimary,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -148,13 +147,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   resetButton: {
-    backgroundColor: 'red',
+    backgroundColor: colors.error,
     padding: 10,
     borderRadius: 5,
     width: '40%',
   },
   registerButton: {
-    backgroundColor: 'blue',
+    backgroundColor: colors.primary,
     padding: 10,
     borderRadius: 5,
     width: '40%',
