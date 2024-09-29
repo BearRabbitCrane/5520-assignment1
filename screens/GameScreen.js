@@ -3,7 +3,8 @@ import { View, Text, Alert, StyleSheet, Image } from 'react-native';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import Input from '../components/Input';
-import colors from '../components/colors'; // Import the colors
+import GradientBackground from '../components/GradientBackground'; // Import GradientBackground
+import colors from '../components/colors';
 
 const sadSmiley = require('../assets/sad_smiley.png'); // Ensure the path is correct
 
@@ -111,7 +112,7 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
     const imageUrl = `https://picsum.photos/id/${chosenNumber}/100/100`;
 
     return (
-      <View style={styles.container}>
+      <GradientBackground>
         <Card>
           <Text style={styles.text}>Congratulations! You guessed the correct number!</Text>
           <Text style={styles.text}>Attempts used: {attemptsUsed}</Text>
@@ -124,13 +125,13 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
 
           <Button title="NEW GAME" onPress={resetGame} style={styles.buttonActive} />
         </Card>
-      </View>
+      </GradientBackground>
     );
   }
 
   if (gameOver) {
     return (
-      <View style={styles.container}>
+      <GradientBackground>
         <Card>
           <Text style={styles.text}>The game is over</Text>
           <Text style={styles.text}>{gameOverReason}</Text>
@@ -141,12 +142,12 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
 
           <Button title="NEW GAME" onPress={resetGame} style={styles.buttonActive} />
         </Card>
-      </View>
+      </GradientBackground>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <GradientBackground>
       <View style={styles.restartContainer}>
         <Button title="RESTART" onPress={onRestart} style={styles.restartButton} />
       </View>
@@ -193,24 +194,17 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
           <Button title="SUBMIT GUESS" onPress={handleGuess} style={styles.buttonActive} />
         </Card>
       )}
-    </View>
+    </GradientBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.background, // Use color from helper
-    padding: 20,
-  },
   text: {
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
-    color: colors.textPrimary, // Use color from helper
+    color: colors.textPrimary,
   },
   image: {
     width: 100,
@@ -219,7 +213,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   buttonActive: {
-    backgroundColor: colors.primary, // Use color from helper
+    backgroundColor: colors.primary,
     padding: 10,
     marginVertical: 10,
     borderRadius: 5,
@@ -228,7 +222,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   buttonDisabled: {
-    backgroundColor: colors.disabled, // Use color from helper
+    backgroundColor: colors.disabled,
     padding: 10,
     marginVertical: 10,
     borderRadius: 5,
@@ -241,16 +235,16 @@ const styles = StyleSheet.create({
     width: '90%',
   },
   restartButton: {
-    backgroundColor: colors.restart, // Use color from helper
+    backgroundColor: colors.restart,
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
   },
   sadSmiley: {
-    width: 100, // Adjust size
-    height: 100, // Adjust size
+    width: 100,
+    height: 100,
     marginVertical: 10,
-    alignSelf: 'center', // Make sure it centers properly
+    alignSelf: 'center',
   },
 });
 

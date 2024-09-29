@@ -7,6 +7,8 @@ const colors = {
     error: 'red',
     disabled: '#d3d3d3',  // light grey for disabled
     restart: '#1e90ff',
+    gradientStart: '#a0d8f3', // Define gradient start color
+    gradientEnd: '#4a148c', 
   };
   
   export default colors;
