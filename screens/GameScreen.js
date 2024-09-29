@@ -113,6 +113,11 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
 
     return (
       <GradientBackground>
+        {/* Add Restart button at the top */}
+        <View style={styles.restartContainer}>
+          <Button title="RESTART" onPress={onRestart} style={styles.restartButton} />
+        </View>
+
         <Card>
           <Text style={styles.text}>Congratulations! You guessed the correct number!</Text>
           <Text style={styles.text}>Attempts used: {attemptsUsed}</Text>
