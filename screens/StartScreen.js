@@ -20,7 +20,7 @@ const StartScreen = ({ onRegister }) => {
   const validateEmail = (email) => {
     const emailRegex = /\S+@\S+\.\S+/;
     if (!emailRegex.test(email)) {
-      setErrors((prevErrors) => ({ ...prevErrors, email: 'Invalid email address' }));
+      setErrors((prevErrors) => ({ ...prevErrors, email: 'Please enter a valid email address' }));
     } else {
       setErrors((prevErrors) => ({ ...prevErrors, email: '' }));
     }
@@ -29,7 +29,7 @@ const StartScreen = ({ onRegister }) => {
   const validatePhone = (phone) => {
     const phoneRegex = /^\d{10}$/;
     if (!phoneRegex.test(phone) || phone[9] === '0' || phone[9] === '1') {
-      setErrors((prevErrors) => ({ ...prevErrors, phone: 'Invalid phone number' }));
+      setErrors((prevErrors) => ({ ...prevErrors, phone: 'Please enter a valid phone number' }));
     } else {
       setErrors((prevErrors) => ({ ...prevErrors, phone: '' }));
     }
