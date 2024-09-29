@@ -48,7 +48,7 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
       return;
     }
 
-    if (attempts - 1 === 0 && timer > 0 && numGuess != chosenNumber) {
+    if (attempts - 1 === 0 && timer > 0 && numGuess !== chosenNumber) {
       setGameOverReason('You ran out of attempts.');
       setGameOver(true);
     }
@@ -68,8 +68,6 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
 
       // Update attempts and check if the user ran out of attempts
       setAttempts(attempts - 1);
-
-      
     }
   };
 
@@ -110,7 +108,22 @@ const GameScreen = ({ chosenNumber, onRestart, userInfo, onNewGame }) => {
           <Image source={sadSmiley} style={styles.sadSmiley} />
 
           {/* Restart or New Game Button */}
-          <TouchableOpacity onPress={onNewGame} style={styles.buttonActive}>
+          <TouchableOpacity
+            onPress={() => {
+              // Reset all game states and call onNewGame to generate a new number
+              setGameStarted(false);
+              setGuess('');
+              setFeedback('');
+              setAttempts(4);
+              setTimer(60);
+              setHintUsed(false);
+              setShowFeedbackCard(false);
+              setGameOver(false);
+              setAttemptsUsed(0);
+              onNewGame(); // Call the parent function to generate a new number
+            }}
+            style={styles.buttonActive}
+          >
             <Text style={styles.buttonText}>NEW GAME</Text>
           </TouchableOpacity>
         </View>

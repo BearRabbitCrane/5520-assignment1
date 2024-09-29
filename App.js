@@ -21,6 +21,7 @@ export default function App() {
     setShowConfirmModal(true);  // Show the confirm modal
   };
 
+  // Generate the number based on the last digit of the phone number
   const generateNumberToGuess = (phone) => {
     const lastDigit = phone[phone.length - 1]; // Get the last digit of the phone number
     const possibleNumbers = [];
@@ -48,13 +49,22 @@ export default function App() {
     setChosenNumber(null);  // Reset the chosen number
   };
 
+  const handleNewGame = () => {
+    generateNumberToGuess(userInfo.phone); // Generate a new number based on the phone number
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {!isRegistered ? (
         <StartScreen onRegister={handleRegister} />
       ) : (
-        // Pass userInfo to GameScreen to avoid 'undefined' error
-        <GameScreen chosenNumber={chosenNumber} onRestart={handleRestart} userInfo={userInfo} />
+        // Pass userInfo and chosenNumber to GameScreen to avoid 'undefined' error
+        <GameScreen 
+          chosenNumber={chosenNumber} 
+          onRestart={handleRestart} 
+          onNewGame={handleNewGame} // Pass the new game handler
+          userInfo={userInfo} 
+        />
       )}
       <ConfirmScreen
         visible={showConfirmModal}
